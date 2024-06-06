@@ -77,15 +77,15 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
 
 void KittiPublishersNode::init_file_path()
 {
-    path_point_cloud_ = "/data/osdar23_station_klein_flottbek/pointcloud";
-    path_image_color_left_ = "/data/osdar23_station_klein_flottbek/rgb_highres_left";
-    path_image_color_mid_ = "/data/osdar23_station_klein_flottbek/rgb_highres_mid";
-    path_image_color_right_ = "/data/osdar23_station_klein_flottbek/rgb_highres";
+    path_point_cloud_ = "data/osdar23_station_klein_flottbek/pointcloud";
+    path_image_color_left_ = "data/osdar23_station_klein_flottbek/rgb_highres_left";
+    path_image_color_mid_ = "data/osdar23_station_klein_flottbek/rgb_highres_center";
+    path_image_color_right_ = "data/osdar23_station_klein_flottbek/rgb_highres";
 }
 
 std::string KittiPublishersNode::get_path(KittiPublishersNode::PublisherType publisher_type)
 {
-  RCLCPP_INFO(this->get_logger(), "get_path: '%i'", publisher_type);
+  RCLCPP_INFO(this->get_logger(), "get_path: '%i'", static_cast<int>(publisher_type));
   std::string path;
   if (publisher_type == KittiPublishersNode::PublisherType::POINT_CLOUD){
     path = path_point_cloud_;
@@ -107,8 +107,15 @@ std::vector<std::string> KittiPublishersNode::get_filenames(PublisherType publis
      return file_names_image_color_left_;
   }else if(publisher_type == KittiPublishersNode::PublisherType::IMAGE_MID_COLOR){
      return file_names_image_color_mid_;
-  }else if(publisher_type == KittiPublishersNode::PublisherType::IMAGE_RIGHT_COLOR){
-     return file_names_image_color_right_;
+  }else{
+    
+    // Make sure that the publisher type is IMAGE_RIGHT_COLOR and otherwise raise an exception
+
+    if (publisher_type != KittiPublishersNode::PublisherType::IMAGE_RIGHT_COLOR){
+      throw std::invalid_argument("Invalid publisher type");
+    }
+
+    return file_names_image_color_right_;
   }
 }
 

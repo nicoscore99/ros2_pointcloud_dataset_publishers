@@ -52,11 +52,9 @@ public:
   enum class PublisherType 
   { 
       POINT_CLOUD = 0,
-      IMAGE_LEFT_GRAY = 1, 
-      IMAGE_RIGHT_GRAY = 2,  
-      IMAGE_LEFT_COLOR = 3, 
-      IMAGE_RIGHT_COLOR = 4, 
-      ODOMETRY = 5
+      IMAGE_LEFT_COLOR = 1,
+      IMAGE_MID_COLOR = 2,
+      IMAGE_RIGHT_COLOR = 3
   };
 
   KITTI_PUBLISHERS_NODE_PUBLIC KittiPublishersNode();
@@ -74,10 +72,6 @@ private:
 
   std::string mat_type2encoding(int mat_type);
   void convert_image_to_msg(sensor_msgs::msg::Image & msg, const std::string path );
-
-  void prepare_navsatfix_msg(std::vector<std::string> &oxts_tokenized_array, sensor_msgs::msg::NavSatFix &msg);
-  void prepare_imu_msg(std::vector<std::string> &oxts_tokenized_array, sensor_msgs::msg::Imu &msg);
-  void prepare_marker_array_msg(std::vector<std::string> &oxts_tokenized_array, visualization_msgs::msg::MarkerArray &msg);
   void convert_pcl_to_pointcloud2(sensor_msgs::msg::PointCloud2 & msg );
   
   size_t file_index_;
@@ -85,28 +79,19 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr publisher_point_cloud_;   // velodyne point clouds publisher
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_image_gray_left_;     // left rectified grayscale image sequence
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_image_gray_right_;    // right rectified grayscale image sequence
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_image_color_left_;    // left rectified color image sequence
+  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_image_color_mid_;   // right rectified color image sequence
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_image_color_right_;   // right rectified color image sequence
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr publisher_odometry_;            // oxts odometry publisher
-  rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr publisher_imu_;                    // oxts odometry publisher
-  rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr publisher_nav_sat_fix_;      // oxts odometry publisher
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr publisher_marker_array_;  // oxts odometry publisher
 
   std::vector<std::string> file_names_point_cloud_;
-  std::vector<std::string> file_names_image_gray_left_;
-  std::vector<std::string> file_names_image_gray_right_;
   std::vector<std::string> file_names_image_color_left_;
+  std::vector<std::string> file_names_image_color_mid_;
   std::vector<std::string> file_names_image_color_right_;
-  std::vector<std::string> file_names_oxts_;
 
   std::string path_point_cloud_;
-  std::string path_image_gray_left_;
-  std::string path_image_gray_right_;
   std::string path_image_color_left_;
+  std::string path_image_color_mid_;
   std::string path_image_color_right_;
-  std::string path_oxts_;
 };
 
 #endif  // ROS2_KITTI_PUBLISHERS__KITTI_PUBLISHERS_NODE_HPP_
