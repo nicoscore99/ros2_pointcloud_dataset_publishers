@@ -58,7 +58,7 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
     std::string filePath = get_path(KittiPublishersNode::PublisherType::POINT_CLOUD) + file_names_point_cloud_[file_index_];
     std::fstream input(filePath, std::ios::in | std::ios::binary);
     if(!input.good()){
-      RCLCPP_INFO(this->get_logger(), "Could not read Velodyne's point cloud. Check your file path!");
+      RCLCPP_INFO(this->get_logger(), "Could not read the point cloud. Check your file path!");
       exit(EXIT_FAILURE);
     }
     input.seekg(0, std::ios::beg);
@@ -77,10 +77,10 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
 
 void KittiPublishersNode::init_file_path()
 {
-    path_point_cloud_ = "data/osdar23_station_klein_flottbek/pointcloud";
-    path_image_color_left_ = "data/osdar23_station_klein_flottbek/rgb_highres_left";
-    path_image_color_mid_ = "data/osdar23_station_klein_flottbek/rgb_highres_center";
-    path_image_color_right_ = "data/osdar23_station_klein_flottbek/rgb_highres";
+    path_point_cloud_ = "data/osdar23_station_klein_flottbek/pointcloud/";
+    path_image_color_left_ = "data/osdar23_station_klein_flottbek/rgb_highres_left/";
+    path_image_color_mid_ = "data/osdar23_station_klein_flottbek/rgb_highres_center/";
+    path_image_color_right_ = "data/osdar23_station_klein_flottbek/rgb_highres_right/";
 }
 
 std::string KittiPublishersNode::get_path(KittiPublishersNode::PublisherType publisher_type)
@@ -89,12 +89,23 @@ std::string KittiPublishersNode::get_path(KittiPublishersNode::PublisherType pub
   std::string path;
   if (publisher_type == KittiPublishersNode::PublisherType::POINT_CLOUD){
     path = path_point_cloud_;
+    // print the path to the console
+    RCLCPP_INFO(this->get_logger(), "path_point_cloud_: '%s'", path_point_cloud_.c_str());
   }else if(publisher_type == KittiPublishersNode::PublisherType::IMAGE_LEFT_COLOR){
     path = path_image_color_left_;
+    RCLCPP_INFO(this->get_logger(), "path_image_color_left_: '%s'", path_image_color_left_.c_str());
   }else if(publisher_type == KittiPublishersNode::PublisherType::IMAGE_MID_COLOR){
     path = path_image_color_mid_;
-  }else if(publisher_type == KittiPublishersNode::PublisherType::IMAGE_RIGHT_COLOR){
+    RCLCPP_INFO(this->get_logger(), "path_image_color_mid_: '%s'", path_image_color_mid_.c_str());
+  }else{
+
+    // Make sure that the publisher type is IMAGE_RIGHT_COLOR and otherwise raise an exception
+
+    if (publisher_type != KittiPublishersNode::PublisherType::IMAGE_RIGHT_COLOR){
+      throw std::invalid_argument("Invalid publisher type");
+    } 
     path = path_image_color_right_;
+    RCLCPP_INFO(this->get_logger(), "path_image_color_right_: '%s'", path_image_color_right_.c_str());
   }
   return path;
 }
@@ -165,6 +176,10 @@ void KittiPublishersNode::convert_image_to_msg(sensor_msgs::msg::Image & msg, co
 {
   Mat frame;
   frame = imread(path);
+
+  // Print the path to the console
+  RCLCPP_INFO(this->get_logger(), "path: '%s'", path.c_str());
+
   if (frame.empty())                      // Check for invalid input
   {
     RCLCPP_ERROR(this->get_logger(), "Image does not exist. Check your files path!");
