@@ -21,7 +21,7 @@ KittiPublishersNode::KittiPublishersNode()
   create_publishers_data_file_names();
 
   timer_ = create_wall_timer(
-    100ms, std::bind(&KittiPublishersNode::on_timer_callback, this));
+    10ms, std::bind(&KittiPublishersNode::on_timer_callback, this));
 }
 
 void KittiPublishersNode::on_timer_callback()
@@ -78,9 +78,9 @@ void KittiPublishersNode::convert_pcl_to_pointcloud2(sensor_msgs::msg::PointClou
 void KittiPublishersNode::init_file_path()
 {
     path_point_cloud_ = "data/osdar23_station_klein_flottbek/pointcloud/";
-    path_image_color_left_ = "data/osdar23_station_klein_flottbek/rgb_highres_left/";
-    path_image_color_mid_ = "data/osdar23_station_klein_flottbek/rgb_highres_center/";
-    path_image_color_right_ = "data/osdar23_station_klein_flottbek/rgb_highres_right/";
+    path_image_color_left_ = "data/osdar23_station_klein_flottbek/rgb_left/";
+    path_image_color_mid_ = "data/osdar23_station_klein_flottbek/rgb_center/";
+    path_image_color_right_ = "data/osdar23_station_klein_flottbek/rgb_right/";
 }
 
 std::string KittiPublishersNode::get_path(KittiPublishersNode::PublisherType publisher_type)
